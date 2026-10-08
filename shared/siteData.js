@@ -1,15 +1,14 @@
 /**
- * Realy.si — site content & DEMO data.
+ * Realy.si — default site content & DEMO data (shared by server + client).
  *
- * Everything the interactive sections render lives here, separate from the
- * rendering logic in main.js. Values marked DEMO are illustrative UI values
- * only — they are not real customers, revenue or statistics.
+ * The server seeds MongoDB from this file (`npm run seed`) and falls back to it
+ * when no database is configured. The client renders it instantly while the
+ * live payload loads from `GET /api/site`.
  *
- * To connect real application data later, replace a block below with a fetch
- * (e.g. `REALY_DATA.dashboard = await fetch('/api/dashboard').then(r => r.json())`)
- * that returns the same shape, then call `Realy.render()` again.
+ * Values marked DEMO are illustrative UI values only — not real customers,
+ * revenue or statistics.
  */
-window.REALY_DATA = {
+const siteData = {
   links: {
     signup: "https://app.realy.si/signup",
     login: "https://app.realy.si/login",
@@ -280,3 +279,5 @@ window.REALY_DATA = {
     },
   ],
 };
+
+export default siteData;
