@@ -19,10 +19,16 @@ app.use(cors({ origin: (process.env.CLIENT_ORIGIN || "http://localhost:5173").sp
 app.use("/api", api);
 app.use("/api", (_req, res) => res.status(404).json({ error: "Not found" }));
 
-// Production: serve the built React app from the same origin.
+// Production: serve the built React app. Each public route has its own
+// prerendered HTML (route-specific metadata); unknown paths get 404.html.
 if (fs.existsSync(CLIENT_DIST)) {
-  app.use(express.static(CLIENT_DIST, { maxAge: "1h", index: false }));
-  app.get("/{*splat}", (_req, res) => res.sendFile(path.join(CLIENT_DIST, "index.html")));
+  app.use(express.static(CLIENT_DIST, { maxAge: "1h", index: false, redirect: false }));
+  app.get("/{*splat}", (req, res) => {
+    const clean = path.normalize(req.path).replace(/^([/\\])+|[/\\]+$/g, "");
+    const file = path.join(CLIENT_DIST, clean, "index.html");
+    if (file.startsWith(CLIENT_DIST) && fs.existsSync(file)) return res.sendFile(file);
+    res.status(404).sendFile(path.join(CLIENT_DIST, "404.html"));
+  });
 }
 
 app.use((err, _req, res, _next) => {

@@ -1,61 +1,96 @@
-import { useEffect, useState } from "react";
-import { Logo, Arrow } from "./ui.jsx";
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router";
+import { Button, Logo } from "./ui.jsx";
+import { useData } from "../hooks/useSiteData.jsx";
 
-const LINKS = [
-  ["#platform", "Platform"],
-  ["#team", "AI Team"],
-  ["#setup", "Company Setup"],
-  ["#product", "Product"],
-  ["#marketplace", "Marketplace"],
-  ["#pricing", "Pricing"],
+const PRIMARY = [
+  ["/platform", "Platform"],
+  ["/superintelligence", "Superintelligence"],
+  ["/ai-employees", "Workforce"],
+  ["/marketplace", "Marketplace"],
+  ["/pricing", "Pricing"],
 ];
 
-export default function Nav({ links }) {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+export const SYSTEM_MENU = [
+  { title: "System", links: [["/platform", "Platform", "The intelligence layer, end to end"], ["/superintelligence", "Superintelligence", "Research, reasoning, execution"], ["/ai-employees", "Digital workforce", "A living organization"], ["/security", "Security & control", "Founder-first by design"]] },
+  { title: "Build", links: [["/company", "From thought to company", "The complete transformation"], ["/company-setup", "Company setup", "Formation across six regions"], ["/product-development", "Product engineering", "$500 → $100,000+"], ["/marketplace", "Marketplace", "50+ ready-to-launch products"]] },
+  { title: "Grow", links: [["/marketing", "Marketing", "Market to leads"], ["/sales", "Sales", "Lead to customer"], ["/resources", "Resources", "Guides and playbooks"], ["/about", "About", "Why Realy exists"]] },
+];
 
+export default function Nav() {
+  const { links } = useData();
+  const [scrolled, setScrolled] = useState(false);
+  const [menu, setMenu] = useState(false); // desktop "System" panel
+  const [sheet, setSheet] = useState(false); // mobile sheet
+  const { pathname } = useLocation();
+  const panelRef = useRef(null);
+
+  useEffect(() => { setMenu(false); setSheet(false); }, [pathname]);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
-    const onKey = (e) => e.key === "Escape" && setOpen(false);
-    const onResize = () => window.innerWidth > 1080 && setOpen(false);
+    const onKey = (e) => { if (e.key === "Escape") { setMenu(false); setSheet(false); } };
+    const onClick = (e) => { if (panelRef.current && !panelRef.current.contains(e.target)) setMenu(false); };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
     document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onClick);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onClick);
     };
   }, []);
-
-  const close = () => setOpen(false);
+  useEffect(() => { document.body.style.overflow = sheet ? "hidden" : ""; }, [sheet]);
 
   return (
-    <header className={`nav ${scrolled ? "is-scrolled" : ""}`}>
-      <div className="nav__inner container">
-        <Logo />
-        <nav className="nav__links" aria-label="Primary">
-          {LINKS.map(([href, label]) => <a key={href} href={href}>{label}</a>)}
+    <>
+    <header className={`nav ${scrolled || menu || sheet ? "is-solid" : ""}`}>
+      <div className="container nav__inner">
+        <Link to="/" className="nav__logo" aria-label="Realy.si home"><Logo height={24} /></Link>
+
+        <nav className="nav__links" aria-label="Primary" ref={panelRef}>
+          <button className={`nav__link nav__sys ${menu ? "is-open" : ""}`} aria-expanded={menu} aria-controls="sys-panel" onClick={() => setMenu((m) => !m)}>
+            System <span aria-hidden="true" className="nav__caret" />
+          </button>
+          {PRIMARY.map(([to, label]) => <NavLink key={to} to={to} className="nav__link">{label}</NavLink>)}
+          <div id="sys-panel" className={`sys ${menu ? "is-open" : ""}`} hidden={!menu}>
+            {SYSTEM_MENU.map((col) => (
+              <div key={col.title} className="sys__col">
+                <p className="mono sys__title">{col.title}</p>
+                {col.links.map(([to, label, desc]) => (
+                  <Link key={to} to={to} className="sys__link" onClick={() => setMenu(false)}><strong>{label}</strong><span>{desc}</span></Link>
+                ))}
+              </div>
+            ))}
+          </div>
         </nav>
+
         <div className="nav__actions">
           <a className="nav__login" href={links.login}>Log in</a>
-          <a className="btn btn--primary btn--sm" href={links.signup}>Start Building <Arrow /></a>
-          <button
-            className="nav__toggle"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            onClick={() => setOpen((o) => !o)}
-          ><span /><span /></button>
+          <Button href={links.signup} size="sm" arrow>Start building</Button>
+          <button className="nav__burger" aria-label={sheet ? "Close menu" : "Open menu"} aria-expanded={sheet} aria-controls="sheet" onClick={() => setSheet((s) => !s)}>
+            <span /><span />
+          </button>
         </div>
       </div>
-      <div className="mobile-menu" id="mobile-menu" hidden={!open}>
-        <nav className="container" aria-label="Mobile">
-          {LINKS.map(([href, label]) => <a key={href} href={href} onClick={close}>{label}</a>)}
-          <a href={links.login} onClick={close}>Log in</a>
-        </nav>
-      </div>
+
     </header>
+    {/* Outside <header>: its backdrop-filter would otherwise trap position:fixed */}
+    <div id="sheet" className={`sheet ${sheet ? "is-open" : ""}`} hidden={!sheet}>
+      <div className="container sheet__inner">
+        {SYSTEM_MENU.map((col) => (
+          <div key={col.title} className="sheet__col">
+            <p className="mono sys__title">{col.title}</p>
+            {col.links.map(([to, label]) => <Link key={to} to={to} className="sheet__link" onClick={() => setSheet(false)}>{label}</Link>)}
+          </div>
+        ))}
+        <div className="sheet__col">
+          <Link to="/pricing" className="sheet__link" onClick={() => setSheet(false)}>Pricing</Link>
+          <a href={links.login} className="sheet__link">Log in</a>
+        </div>
+        <Button href={links.signup} arrow className="sheet__cta">Start building</Button>
+      </div>
+    </div>
+    </>
   );
 }

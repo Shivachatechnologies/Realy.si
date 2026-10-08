@@ -32,41 +32,63 @@ from `shared/siteData.js`, so the site always works.
 ## Structure
 
 ```
-shared/siteData.js        Default content & DEMO data (used by seed, API fallback, client first paint)
+shared/siteData.js        All content + DEMO data (seed source, API fallback, client first paint)
+shared/routes.js          Public routes + SEO metadata (router titles, prerender, sitemap)
 server/
-  src/index.js            Express app (API + static client in production)
-  src/db.js               Mongo connection with graceful fallback
-  src/models/index.js     DashboardView, MarketplaceItem, PricingPlan, Jurisdiction, SiteSetting
-  src/content.js          Repository: Mongo → shared defaults per section
-  src/routes/api.js       REST endpoints
+  src/app.js              Express app: /api + serves client/dist (per-route HTML, 404)
+  src/index.js            Starts the server
+  src/models/index.js     MarketplaceItem, PricingPlan, SiteSetting (every other section)
+  src/content.js          Repository: MongoDB → shared defaults per section
   src/seed.js             Seeds MongoDB from shared/siteData.js
 client/
-  src/App.jsx             Page composition
-  src/components/*.jsx    One component per section
-  src/hooks/              useSiteData (fetches /api/site), useInView
-  src/styles.css          Design tokens (brand book v2) and all styles
+  src/App.jsx             Router (14 pages, code-split)
+  src/pages/              Home, Platform, Superintelligence, Workforce, Company, ProductDevelopment,
+                          Marketplace, Growth (marketing/sales), CompanySetup, Pricing, Security,
+                          Resources, About, NotFound
+  src/viz/                System visualizations
+    core/engine.js        WebGL "Superintelligence Core" (Three.js, lazy-loaded, GPU shaders)
+    DecompositionGraph, WorkforceMap, Pipeline, CommandCenter, AutonomyControl,
+    ProductEngineering, Marketplace, GlobalNetwork (canvas globe), GrowthEngine,
+    ReasoningTrace, SystemArchitecture, HeroOrbit
+  build/prerender.js      Vite plugin: per-route HTML + OG tags, sitemap.xml, robots.txt, 404.html
+  public/brand/           Official Realy logo (extracted from brand book v2, "on dark" variant)
 ```
+
+## Pages
+
+`/` · `/platform` · `/superintelligence` · `/ai-employees` · `/company` · `/product-development` ·
+`/marketplace` · `/marketing` · `/sales` · `/company-setup` · `/pricing` · `/security` · `/resources` · `/about`
 
 ## API
 
 | Method | Path | Returns |
 | --- | --- | --- |
 | GET | `/api/health` | `{ ok, db: "connected" \| "fallback" }` |
-| GET | `/api/site` | Everything the page renders, in one payload |
-| GET | `/api/dashboard` | Command-center views |
+| GET | `/api/site` | Everything the site renders, in one payload |
+| GET | `/api/command-center` | Founder command-center data |
 | GET | `/api/marketplace?category=AI` | Marketplace catalog (optional filter) |
 | GET | `/api/pricing` | Pricing plans |
-| GET | `/api/jurisdictions` | Company-setup jurisdictions |
 
 ## Connecting real data
 
-Dashboard, hero and marketplace values are **demo UI values only**. Replace them
-by editing the MongoDB collections (or `shared/siteData.js` and re-running
-`npm run seed`) — the client picks up whatever `/api/site` returns, as long as
-the shape stays the same.
+Command-center values, workforce statuses and marketplace listings are **demo
+values only**. Replace them by editing MongoDB (or `shared/siteData.js` and
+re-running `npm run seed`). The client renders whatever `/api/site` returns, as
+long as the shape stays the same. On a static deployment without the API the
+bundled defaults are shown.
+
+## Performance
+
+- First paint ships React + the app shell (~130 KB gzipped incl. CSS and logo).
+- Three.js (~126 KB gzipped) loads only after first paint, only when WebGL is available.
+- All particle motion runs in vertex shaders; animation loops pause offscreen and in background tabs.
+- `prefers-reduced-motion`: the core renders one static frame and all motion is disabled.
+- Small screens and low-core devices get a lighter particle budget; no WebGL → static poster.
 
 ## Brand
 
-- Realy Blue `#1764FF`, Midnight `#0B1220`, Slate `#5A6478`, Cloud `#F4F6FA`, Mist `#E8F0FF`
-- Sora (display) · Inter (body/UI) · JetBrains Mono (technical labels)
+- Official logo only (brand book v2, "on dark" variant) — never redrawn or recolored
+- Deep-space navy `#04060B`, Realy Blue `#1764FF` as the intelligence signal, ice `#CFE0FF` / cyan `#6FD3FF` accents
+- Geist (display + UI) · Geist Mono (technical labels)
+- Fluid type and layout: root size scales with the viewport, so 4K uses the full width
 - Motion respects `prefers-reduced-motion`.

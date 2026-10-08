@@ -5,7 +5,7 @@
 import "dotenv/config";
 import mongoose from "mongoose";
 import data from "../../shared/siteData.js";
-import { DashboardView, MarketplaceItem, PricingPlan, Jurisdiction, SiteSetting } from "./models/index.js";
+import { MarketplaceItem, PricingPlan, SiteSetting } from "./models/index.js";
 
 const uri = process.env.MONGODB_URI;
 if (!uri) {
@@ -14,23 +14,17 @@ if (!uri) {
 }
 
 await mongoose.connect(uri);
-const withOrder = (arr, map = (x) => x) => arr.map((x, i) => ({ ...map(x), order: i }));
+await Promise.all([MarketplaceItem, PricingPlan, SiteSetting].map((M) => M.deleteMany({})));
 
-await Promise.all([DashboardView, MarketplaceItem, PricingPlan, Jurisdiction, SiteSetting].map((M) => M.deleteMany({})));
+const { items, ...marketplaceMeta } = data.marketplace;
+await MarketplaceItem.insertMany(items.map((x, i) => ({ ...x, order: i })));
+await PricingPlan.insertMany(data.pricing.map((x, i) => ({ ...x, order: i })));
 
-await DashboardView.insertMany(withOrder(data.dashboard.views, ({ id, ...v }) => ({ key: id, ...v })));
-await MarketplaceItem.insertMany(withOrder(data.marketplace.items));
-await PricingPlan.insertMany(withOrder(data.pricing));
-await Jurisdiction.insertMany(withOrder(data.jurisdictions, ({ id, ...j }) => ({ code: id, ...j })));
+const sections = Object.entries(data).filter(([k]) => !["marketplace", "pricing"].includes(k));
 await SiteSetting.insertMany([
-  { key: "links", value: data.links },
-  { key: "hero", value: data.hero },
-  { key: "products", value: data.products },
-  { key: "org", value: data.org },
-  { key: "dashboardCompany", value: data.dashboard.company },
-  { key: "marketplace", value: { total: data.marketplace.total, categories: data.marketplace.categories } },
+  ...sections.map(([key, value]) => ({ key, value })),
+  { key: "marketplace", value: marketplaceMeta },
 ]);
 
-console.log("Seeded: %d dashboard views, %d marketplace items, %d plans, %d jurisdictions.",
-  data.dashboard.views.length, data.marketplace.items.length, data.pricing.length, data.jurisdictions.length);
+console.log("Seeded %d sections, %d marketplace items, %d plans.", sections.length + 1, items.length, data.pricing.length);
 await mongoose.disconnect();

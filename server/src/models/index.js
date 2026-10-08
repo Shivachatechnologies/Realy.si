@@ -3,33 +3,6 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 const opts = { timestamps: true, versionKey: false };
 
-/* Command-center dashboard (DEMO values until wired to real company data) */
-const MetricSchema = new Schema(
-  { label: String, value: Number, format: { type: String, enum: ["currency", "number", "percent", "percent1"] }, suffix: String, delta: String },
-  { _id: false }
-);
-const RowSchema = new Schema(
-  { who: String, what: String, meta: String, tone: { type: String, enum: ["live", "info", "warn"] } },
-  { _id: false }
-);
-export const DashboardView = model(
-  "DashboardView",
-  new Schema(
-    {
-      key: { type: String, required: true, unique: true },
-      label: { type: String, required: true },
-      title: String,
-      subtitle: String,
-      metrics: [MetricSchema],
-      series: [Number],
-      seriesLabel: String,
-      rows: [RowSchema],
-      order: { type: Number, default: 0 },
-    },
-    opts
-  )
-);
-
 /* White-label marketplace catalog */
 export const MarketplaceItem = model(
   "MarketplaceItem",
@@ -64,22 +37,7 @@ export const PricingPlan = model(
   )
 );
 
-/* Company-setup jurisdictions */
-export const Jurisdiction = model(
-  "Jurisdiction",
-  new Schema(
-    {
-      code: { type: String, required: true, unique: true },
-      name: String,
-      entity: String,
-      note: String,
-      order: { type: Number, default: 0 },
-    },
-    opts
-  )
-);
-
-/* Free-form site settings: hero, org chart, product scale, links, … */
+/* Every other content section (command center, workforce, pipeline, …), keyed by section name */
 export const SiteSetting = model(
   "SiteSetting",
   new Schema({ key: { type: String, required: true, unique: true }, value: Schema.Types.Mixed }, opts)

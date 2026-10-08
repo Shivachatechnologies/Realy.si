@@ -1,57 +1,36 @@
-import { useEffect, useState } from "react";
-import { Arrow, Logo, Reveal } from "./ui.jsx";
+import { Link } from "react-router";
+import { Logo } from "./ui.jsx";
+import { SYSTEM_MENU } from "./Nav.jsx";
+import { useData } from "../hooks/useSiteData.jsx";
 
-export function FinalCTA({ links }) {
-  return (
-    <section className="final" aria-labelledby="final-h">
-      <div className="hero__bg" aria-hidden="true" />
-      <div className="container final__inner">
-        <Reveal as="p" className="eyebrow">Your company starts here.</Reveal>
-        <Reveal as="h2" id="final-h" className="display display--final">Tell Realy what you want to build.</Reveal>
-        <Reveal as="p" className="lede">Your AI company takes it from there.</Reveal>
-        <Reveal><a className="btn btn--primary btn--lg" href={links.signup}>Start Building <Arrow /></a></Reveal>
-      </div>
-    </section>
-  );
-}
-
-export function Footer() {
+export default function Footer() {
+  const { links } = useData();
   return (
     <footer className="footer">
       <div className="container footer__inner">
-        <Logo />
-        <nav className="footer__links" aria-label="Footer">
-          <a href="#platform">Platform</a>
-          <a href="#team">AI Team</a>
-          <a href="#setup">Company Setup</a>
-          <a href="#marketplace">Marketplace</a>
-          <a href="#pricing">Pricing</a>
+        <div className="footer__brand">
+          <Logo height={26} />
+          <p>The company intelligence platform.<br />One intelligence. Every function.</p>
+          <p className="mono footer__status"><i />All systems nominal</p>
+        </div>
+        {SYSTEM_MENU.map((col) => (
+          <nav key={col.title} className="footer__col" aria-label={col.title}>
+            <p className="mono">{col.title}</p>
+            {col.links.map(([to, label]) => <Link key={to} to={to}>{label}</Link>)}
+          </nav>
+        ))}
+        <nav className="footer__col" aria-label="Account">
+          <p className="mono">Account</p>
+          <Link to="/pricing">Pricing</Link>
+          <a href={links.login}>Log in</a>
+          <a href={links.signup}>Start building</a>
+          <a href={links.app}>app.realy.si</a>
         </nav>
-        <p className="footer__meta">© {new Date().getFullYear()} Realy.si · Keep it Realy.</p>
+      </div>
+      <div className="container footer__base">
+        <span>© {new Date().getFullYear()} Realy.si</span>
+        <span className="mono">Keep it Realy.</span>
       </div>
     </footer>
-  );
-}
-
-/** Mobile-only (CSS) sticky CTA: visible after the hero, hidden near the end. */
-export function StickyCTA({ links }) {
-  const [on, setOn] = useState(false);
-  useEffect(() => {
-    const onScroll = () => {
-      const hero = document.querySelector(".hero");
-      if (!hero) return;
-      const y = window.scrollY;
-      const pastHero = y > hero.offsetTop + hero.offsetHeight - 120;
-      const nearEnd = window.innerHeight + y > document.body.scrollHeight - 520;
-      setOn(pastHero && !nearEnd);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  return (
-    <div className={`sticky-cta ${on ? "is-on" : ""}`}>
-      <a className="btn btn--primary btn--block" href={links.signup}>Start Building <Arrow /></a>
-    </div>
   );
 }
