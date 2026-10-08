@@ -2,7 +2,8 @@
   "name": "realy-si",
   "version": "1.0.0",
   "private": true,
-  "description": "Realy.si — MERN marketing site (MongoDB, Express, React, Node)",
+  "type": "module",
+  "description": "Realy.si \u2014 MERN marketing site (MongoDB, Express, React, Node)",
   "scripts": {
     "install:all": "npm install --prefix server && npm install --prefix client",
     "dev": "concurrently -n api,web -c blue,green \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
@@ -13,5 +14,7 @@
   "devDependencies": {
     "concurrently": "^9.2.1"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }

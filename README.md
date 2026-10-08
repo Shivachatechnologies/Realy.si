@@ -26,6 +26,15 @@ npm run build          # builds client/dist
 npm start              # Express serves the API and client/dist on PORT
 ```
 
+### Deploying on Vercel
+
+`vercel.json` is already configured: Vercel installs `server/` + `client/`,
+builds the React app to `client/dist`, and runs the Express API as a serverless
+function (`api/index.js`) for every `/api/*` request. In the Vercel project:
+
+- **Root Directory**: leave empty (repo root) — do **not** set it to `client`
+- **Environment variable**: `MONGODB_URI` (optional; without it the API serves demo data)
+
 No database? Leave `MONGODB_URI` empty — the API serves the built-in demo data
 from `shared/siteData.js`, so the site always works.
 
