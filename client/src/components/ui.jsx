@@ -3,7 +3,6 @@ import { Link } from "react-router";
 import { useInView } from "../hooks/useInView.js";
 import { prefersReducedMotion } from "../lib/motion.js";
 import { fmt } from "../lib/format.js";
-import HeroOrbit from "../viz/HeroOrbit.jsx";
 
 /** Official Realy logo (brand book v2, "Primary — full colour" variant). Never recolored or redrawn. */
 export function Logo({ className = "", height = 26 }) {
@@ -73,19 +72,23 @@ export function SectionHead({ eyebrow, title, lede, align = "left", children }) 
   );
 }
 
-/** Sub-page hero. */
-export function PageHero({ eyebrow, title, lede, children, visual, label }) {
+/** Sub-page hero: editorial split (title left, intro + actions right) unless a visual is given. */
+export function PageHero({ eyebrow, title, lede, children, visual }) {
+  const intro = (
+    <>
+      {lede && <Reveal as="p" className="lede lede--lg">{lede}</Reveal>}
+      {children && <Reveal className="phero__cta">{children}</Reveal>}
+    </>
+  );
   return (
-    <section className="phero">
-      <div className="bg-grid" aria-hidden="true" />
+    <section className={`phero ${visual ? "phero--visual" : "phero--text"}`}>
       <div className="container phero__inner">
         <div className="phero__copy">
           <Reveal as="p" className="eyebrow">{eyebrow}</Reveal>
           <Reveal as="h1" className="h1">{title}</Reveal>
-          {lede && <Reveal as="p" className="lede lede--lg">{lede}</Reveal>}
-          {children && <Reveal className="phero__cta">{children}</Reveal>}
+          {visual && intro}
         </div>
-        <div className={`phero__visual ${visual ? "" : "phero__visual--deco"}`}>{visual || <HeroOrbit label={label || String(eyebrow).toLowerCase().replace(/[^a-z0-9]+/g, "-")} />}</div>
+        {visual ? <div className="phero__visual">{visual}</div> : <div className="phero__side">{intro}</div>}
       </div>
     </section>
   );

@@ -577,27 +577,12 @@ h1, h2, h3, p { margin: 0; }
 .arch__items li { font-size: 0.75rem; color: var(--text-2); padding: 0.3rem 0.6rem; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line); }
 
 /* =========================================================== PAGE HERO */
-.phero { position: relative; overflow: hidden; padding-block: clamp(4rem, 9vw, 9rem) clamp(3rem, 6vw, 6rem); }
-.phero__inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2rem, 4vw, 5rem); align-items: center; }
-.phero__copy .h1 { max-width: 16em; }
-.phero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; }
-
-/* decorative orbit for sub-page heroes */
-.horbit { position: relative; width: min(100%, 30rem); margin-inline: auto; aspect-ratio: 1; }
-.horbit svg { width: 100%; height: 100%; overflow: visible; }
-.horbit__axis { stroke: var(--line); stroke-dasharray: 2 6; }
-.horbit__ring { transform-origin: 260px 260px; animation: spin linear infinite; }
-.horbit__ring circle:first-child { fill: none; stroke: var(--line-2); }
-.horbit__ring--0 { animation-duration: 60s; } .horbit__ring--0 circle:first-child { stroke: rgba(23, 100, 255, 0.35); }
-.horbit__ring--1 { animation-duration: 42s; animation-direction: reverse; } .horbit__ring--1 circle:first-child { stroke-dasharray: 2 8; }
-.horbit__ring--2 { animation-duration: 28s; }
-.horbit__ring--3 { animation-duration: 18s; animation-direction: reverse; } .horbit__ring--3 circle:first-child { stroke: rgba(23, 100, 255, 0.3); }
-.horbit__node { fill: var(--cyan);  }
-.horbit__node--dim { fill: var(--blue-2); }
-.horbit__core { animation: breathe 4s ease-in-out infinite; transform-origin: 260px 260px; }
-@keyframes breathe { 50% { transform: scale(1.12); opacity: 0.8; } }
-.horbit__readout { position: absolute; left: 0; right: 0; bottom: -0.5rem; display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--text-3); letter-spacing: 0; }
-.horbit__readout i { display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--ok); margin-right: 0.4rem;  }
+.phero { position: relative; padding-block: clamp(4rem, 9vw, 8.5rem) clamp(3rem, 6vw, 6rem); border-bottom: 1px solid var(--line); }
+.phero__inner { position: relative; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(2rem, 5vw, 7rem); align-items: end; }
+.phero--visual .phero__inner { align-items: center; }
+.phero__copy .h1 { max-width: 15em; }
+.phero__side .lede { margin-top: 0; }
+.phero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
 
 /* roles + faq */
 .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: 0.6rem; }
@@ -653,8 +638,8 @@ h1, h2, h3, p { margin: 0; }
 .route-loading { min-height: 100vh; }
 
 /* ================================================================ REVEAL */
-.js .reveal { opacity: 0; transform: translateY(16px); filter: blur(4px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease), filter 0.9s var(--ease); }
-.js .reveal.is-in { opacity: 1; transform: none; filter: none; }
+.js .reveal { opacity: 0; transform: translateY(12px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+.js .reveal.is-in { opacity: 1; transform: none; }
 
 /* ============================================================ RESPONSIVE */
 @media (max-width: 1280px) {
@@ -688,7 +673,6 @@ h1, h2, h3, p { margin: 0; }
   .split .shead--left .lede, .infra__copy .shead--left .lede { margin-top: 1.5rem; }
 }
   .phero__visual { max-width: 34rem; width: 100%; margin-inline: auto; }
-  .phero__visual--deco { display: none; }
 }
 @media (max-width: 860px) {
   /* Workforce map → list on small screens */
@@ -745,6 +729,6 @@ h1, h2, h3, p { margin: 0; }
 /* ======================================================== REDUCED MOTION */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; transition-delay: 0s !important; }
-  .js .reveal { opacity: 1; transform: none; filter: none; }
+  .js .reveal { opacity: 1; transform: none; }
   .wf__packet { display: none; }
 }
