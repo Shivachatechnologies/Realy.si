@@ -5,9 +5,9 @@ import { prefersReducedMotion } from "../lib/motion.js";
 import { fmt } from "../lib/format.js";
 
 /** Official Realy logo (brand book v2, "Primary — full colour" variant). Never recolored or redrawn. */
-export function Logo({ className = "", height = 26 }) {
+export function Logo({ className = "", height = 26, onDark = false }) {
   return (
-    <img className={`logo-img ${className}`} src="/brand/realy-logo.svg" alt="Realy.si" height={height} width={Math.round(height * 4.4635)} decoding="async" />
+    <img className={`logo-img ${className}`} src={onDark ? "/brand/realy-logo-on-dark.svg" : "/brand/realy-logo.svg"} alt="Realy.si" height={height} width={Math.round(height * 4.4635)} decoding="async" />
   );
 }
 
@@ -16,11 +16,21 @@ export function Mark({ className = "", size = 28 }) {
 }
 
 /** Button that renders an internal <Link> or an external <a>. */
-export function Button({ to, href, variant = "primary", size, children, arrow, className = "", ...rest }) {
+export function Button({ to, href, variant = "primary", size, children, arrow, magnetic, className = "", ...rest }) {
   const cls = `btn btn--${variant} ${size ? `btn--${size}` : ""} ${className}`.trim();
   const inner = <>{children}{arrow && <span className="btn__arrow" aria-hidden="true">→</span>}</>;
-  if (to) return <Link className={cls} to={to} {...rest}>{inner}</Link>;
-  return <a className={cls} href={href} {...rest}>{inner}</a>;
+  // Subtle magnetic pull toward the cursor (fine pointers, motion allowed).
+  const mag = magnetic ? {
+    onPointerMove: (e) => {
+      if (e.pointerType !== "mouse" || prefersReducedMotion()) return;
+      const r = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width / 2) * 0.18, y = (e.clientY - r.top - r.height / 2) * 0.3;
+      e.currentTarget.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+    },
+    onPointerLeave: (e) => { e.currentTarget.style.transform = ""; },
+  } : {};
+  if (to) return <Link className={cls} to={to} {...mag} {...rest}>{inner}</Link>;
+  return <a className={cls} href={href} {...mag} {...rest}>{inner}</a>;
 }
 
 /** Fades in when scrolled into view; sibling reveals stagger by DOM order. */

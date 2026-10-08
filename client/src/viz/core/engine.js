@@ -7,19 +7,19 @@
  * of uniforms and label positions per frame.
  */
 import {
-  NormalBlending, BufferAttribute, BufferGeometry, Color, EdgesGeometry, Group, IcosahedronGeometry,
+  AdditiveBlending, NormalBlending, BufferAttribute, BufferGeometry, Color, EdgesGeometry, Group, IcosahedronGeometry,
   LineBasicMaterial, LineLoop, LineSegments, OctahedronGeometry, PerspectiveCamera, Points, Scene,
   ShaderMaterial, Vector3, WebGLRenderer,
 } from "three";
 
-// Light theme: ink-navy structure, Realy Blue signal, deep-blue accents.
-// Line materials take colors in the working (linear) space; the custom shaders
-// write their output directly, so their uniforms get the sRGB values.
-const ICE = new Color("#0b1220");
-const BLUE = new Color("#1764ff");
-const CYAN = new Color("#0b4fe6");
+// Two palettes. Line materials take colors in the working (linear) space; the
+// custom shaders write their output directly, so their uniforms get sRGB values.
 const toSRGB = (c) => c.clone().convertLinearToSRGB();
-const S_ICE = toSRGB(ICE), S_BLUE = toSRGB(BLUE), S_CYAN = toSRGB(CYAN);
+const PALETTES = {
+  dark: { a: "#cfe0ff", b: "#1764ff", c: "#6fd3ff", dust: [0.75, 0.83, 1.0], dustA: 0.16, blending: AdditiveBlending, nucleus: 0.3 },
+  light: { a: "#0b1220", b: "#1764ff", c: "#0b4fe6", dust: [0.32, 0.4, 0.56], dustA: 0.1, blending: NormalBlending, nucleus: 0.22 },
+};
+
 const FOV = 36;
 const DIST = 10;
 const CORE_R = 1.6; // model-space radius of the shell
@@ -55,7 +55,7 @@ const CORE_VERT = /* glsl */ `
   }`;
 
 const STREAM_VERT = /* glsl */ `
-  uniform float uTime; uniform float uPixel; uniform float uCoreR; uniform vec3 uAnchors[10]; uniform vec3 uA; uniform vec3 uB;
+  uniform float uTime; uniform float uPixel; uniform float uCoreR; uniform vec3 uAnchors[10]; uniform vec3 uA; uniform vec3 uB; uniform float uActive;
   attribute float aIdx; attribute vec3 aDir; attribute float aOff; attribute float aSpeed; attribute float aBend;
   varying vec3 vColor; varying float vAlpha;
   void main() {
@@ -63,23 +63,27 @@ const STREAM_VERT = /* glsl */ `
     vec3 E = uAnchors[int(aIdx)];
     vec3 N = normalize(vec3(-E.y, E.x, 0.6) + 0.0001);
     vec3 C = (S + E) * 0.5 + N * aBend * uCoreR;
-    float t = fract(aOff + uTime * aSpeed);
+    // the selected system draws more, faster flow; the rest quiet down
+    float act = uActive < 0.0 ? 1.0 : (abs(aIdx - uActive) < 0.5 ? 1.0 : 0.0);
+    float on = uActive < 0.0 ? 1.0 : mix(0.18, 1.6, act);
+    float t = fract(aOff + uTime * aSpeed * mix(1.0, 1.9, act * step(0.0, uActive)));
     vec3 p = mix(mix(S, C, t), mix(C, E, t), t);
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = (1.6 + 2.2 * (1.0 - t)) * uPixel * (20.0 / -mv.z);
     vColor = mix(uB, uA, t * 0.6);
-    vAlpha = smoothstep(0.0, 0.1, t) * (1.0 - smoothstep(0.85, 1.0, t)) * 0.75;
+    vAlpha = min(1.0, smoothstep(0.0, 0.1, t) * (1.0 - smoothstep(0.85, 1.0, t)) * 0.8 * on);
   }`;
 
 const NODE_VERT = /* glsl */ `
-  uniform float uTime; uniform float uPixel;
+  uniform float uTime; uniform float uPixel; uniform float uActiveNode;
   attribute float aPhase;
   varying float vPulse;
   void main() {
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * mv;
-    vPulse = 0.5 + 0.5 * sin(uTime * 2.0 + aPhase * 6.2831);
+    float hit = uActiveNode >= 0.0 && abs(aPhase * 10.0 - uActiveNode) < 0.5 ? 1.0 : 0.0;
+    vPulse = max(0.5 + 0.5 * sin(uTime * 2.0 + aPhase * 6.2831), hit * 1.6);
     gl_PointSize = (14.0 + 4.0 * vPulse) * uPixel * (10.0 / -mv.z);
   }`;
 const NODE_FRAG = /* glsl */ `
@@ -105,7 +109,7 @@ const LINK_FRAG = /* glsl */ `
   void main() { gl_FragColor = vec4(uA, vA); }`;
 
 const DUST_VERT = /* glsl */ `
-  uniform float uTime; uniform float uPixel; attribute float aPhase;
+  uniform float uTime; uniform float uPixel; uniform vec3 uDust; uniform float uDustA; attribute float aPhase;
   varying vec3 vColor; varying float vAlpha;
   void main() {
     vec3 p = position;
@@ -114,11 +118,11 @@ const DUST_VERT = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = 2.2 * uPixel * (14.0 / -mv.z);
-    vColor = vec3(0.32, 0.4, 0.56);
-    vAlpha = 0.1 + 0.08 * sin(uTime * 0.8 + aPhase * 20.0);
+    vColor = uDust;
+    vAlpha = uDustA + uDustA * 0.8 * sin(uTime * 0.8 + aPhase * 20.0);
   }`;
 
-const additive = { transparent: true, depthWrite: false, blending: NormalBlending };
+
 
 /* ------------------------------------------------------------- geometry */
 function fibonacciSphere(n) {
@@ -202,7 +206,7 @@ function buildStreams(perAnchor, anchors) {
   return g;
 }
 
-function ring(radius, segments, color, opacity) {
+function ring(radius, segments, color, opacity, blending) {
   const pts = new Float32Array(segments * 3);
   for (let i = 0; i < segments; i++) {
     const a = (i / segments) * Math.PI * 2;
@@ -210,7 +214,7 @@ function ring(radius, segments, color, opacity) {
   }
   const g = new BufferGeometry();
   g.setAttribute("position", new BufferAttribute(pts, 3));
-  const line = new LineLoop(g, new LineBasicMaterial({ color, transparent: true, opacity, depthWrite: false, blending: NormalBlending }));
+  const line = new LineLoop(g, new LineBasicMaterial({ color, transparent: true, opacity, depthWrite: false, blending }));
   // satellites riding the ring
   const sat = new Float32Array(9), ph = new Float32Array(3);
   for (let i = 0; i < 3; i++) {
@@ -225,7 +229,11 @@ function ring(radius, segments, color, opacity) {
 }
 
 /* ----------------------------------------------------------------- scene */
-export function createCore(canvas, { labels = [], getLayout, lite = false }) {
+export function createCore(canvas, { labels = [], getLayout, lite = false, theme = "dark" }) {
+  const P = PALETTES[theme] || PALETTES.dark;
+  const ICE = new Color(P.a), BLUE = new Color(P.b), CYAN = new Color(P.c);
+  const S_ICE = toSRGB(ICE), S_BLUE = toSRGB(BLUE), S_CYAN = toSRGB(CYAN);
+  const additive = { transparent: true, depthWrite: false, blending: P.blending };
   const renderer = new WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: "high-performance" });
   renderer.setClearColor(0x000000, 0);
   const dpr = Math.min(window.devicePixelRatio || 1, lite ? 1.25 : 1.75);
@@ -238,6 +246,7 @@ export function createCore(canvas, { labels = [], getLayout, lite = false }) {
   const uniforms = {
     // uPixel = devicePixelRatio × resolution scale (set in layout)
     uTime: { value: 0 }, uPixel: { value: dpr }, uA: { value: S_ICE }, uB: { value: S_BLUE }, uC: { value: S_CYAN },
+    uActive: { value: -1 }, uActiveNode: { value: -1 }, uDust: { value: P.dust }, uDustA: { value: P.dustA },
   };
 
   const world = new Group(); // receives pointer tilt
@@ -253,7 +262,7 @@ export function createCore(canvas, { labels = [], getLayout, lite = false }) {
   const links = new LineSegments(buildLinks(lite ? 110 : 220), new ShaderMaterial({ uniforms, vertexShader: LINK_VERT, fragmentShader: LINK_FRAG, ...additive }));
   coreGroup.add(links);
 
-  const nucleusA = new LineSegments(new EdgesGeometry(new IcosahedronGeometry(0.55, 1)), new LineBasicMaterial({ color: ICE, transparent: true, opacity: 0.22, ...additive }));
+  const nucleusA = new LineSegments(new EdgesGeometry(new IcosahedronGeometry(0.55, 1)), new LineBasicMaterial({ color: ICE, transparent: true, opacity: P.nucleus, ...additive }));
   const nucleusB = new LineSegments(new EdgesGeometry(new OctahedronGeometry(1.0)), new LineBasicMaterial({ color: BLUE, transparent: true, opacity: 0.3, ...additive }));
   coreGroup.add(nucleusA, nucleusB);
 
@@ -263,7 +272,7 @@ export function createCore(canvas, { labels = [], getLayout, lite = false }) {
     { r: 2.75, tilt: [1.45, -0.35, 0.4], speed: -0.04, op: 0.16 },
     { r: 3.3, tilt: [1.05, 0.5, -0.3], speed: 0.025, op: 0.1 },
   ].map((cfg) => {
-    const { line, satGeom } = ring(cfg.r, 160, BLUE, cfg.op);
+    const { line, satGeom } = ring(cfg.r, 160, BLUE, cfg.op, P.blending);
     const holder = new Group();
     holder.rotation.set(...cfg.tilt);
     const spinner = new Group();
@@ -286,7 +295,7 @@ export function createCore(canvas, { labels = [], getLayout, lite = false }) {
 
   const nodeGeom = new BufferGeometry();
   nodeGeom.setAttribute("position", new BufferAttribute(new Float32Array(A * 3), 3));
-  nodeGeom.setAttribute("aPhase", new BufferAttribute(Float32Array.from({ length: A }, (_, i) => i / A), 1));
+  nodeGeom.setAttribute("aPhase", new BufferAttribute(Float32Array.from({ length: A }, (_, i) => i / 10), 1));
   const nodes = new Points(nodeGeom, new ShaderMaterial({ uniforms, vertexShader: NODE_VERT, fragmentShader: NODE_FRAG, ...additive }));
   nodes.frustumCulled = false;
   world.add(nodes);
@@ -382,6 +391,7 @@ export function createCore(canvas, { labels = [], getLayout, lite = false }) {
     renderOnce,
     relayout() { layout(); if (!running) renderOnce(); },
     setPointer(x, y) { pointer.tx = x; pointer.ty = y; },
+    setActive(i) { uniforms.uActive.value = i; uniforms.uActiveNode.value = i; },
     dispose() {
       running = false; cancelAnimationFrame(raf); ro.disconnect();
       scene.traverse((o) => { o.geometry?.dispose(); o.material?.dispose(); });

@@ -6,9 +6,12 @@ import { useData } from "../hooks/useSiteData.jsx";
 const PRIMARY = [
   ["/platform", "Platform"],
   ["/superintelligence", "Superintelligence"],
-  ["/ai-employees", "Workforce"],
+  ["/ai-employees", "AI Workforce"],
+  ["/company", "Company"],
+  ["/product-development", "Product"],
   ["/marketplace", "Marketplace"],
   ["/pricing", "Pricing"],
+  ["/resources", "Resources"],
 ];
 
 export const SYSTEM_MENU = [
@@ -20,22 +23,32 @@ export const SYSTEM_MENU = [
 export default function Nav() {
   const { links } = useData();
   const [scrolled, setScrolled] = useState(false);
+  const [onDark, setOnDark] = useState(false);
   const [menu, setMenu] = useState(false); // desktop "System" panel
   const [sheet, setSheet] = useState(false); // mobile sheet
   const { pathname } = useLocation();
   const panelRef = useRef(null);
 
-  useEffect(() => { setMenu(false); setSheet(false); }, [pathname]);
+  useEffect(() => { setMenu(false); setSheet(false); window.dispatchEvent(new Event("scroll")); }, [pathname]);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    let raf = 0;
+    // Nav turns dark over [data-dark] sections and compacts once scrolled.
+    const check = () => {
+      setScrolled(window.scrollY > 8);
+      const y = 32;
+      setOnDark([...document.querySelectorAll("[data-dark]")].some((el) => { const r = el.getBoundingClientRect(); return r.top <= y && r.bottom >= y; }));
+    };
+    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(check); };
     const onKey = (e) => { if (e.key === "Escape") { setMenu(false); setSheet(false); } };
     const onClick = (e) => { if (panelRef.current && !panelRef.current.contains(e.target)) setMenu(false); };
-    onScroll();
+    check();
+    const t = setTimeout(check, 300);
     window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("keydown", onKey);
     document.addEventListener("pointerdown", onClick);
     return () => {
       window.removeEventListener("scroll", onScroll);
+      clearTimeout(t); cancelAnimationFrame(raf);
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("pointerdown", onClick);
     };
@@ -44,25 +57,12 @@ export default function Nav() {
 
   return (
     <>
-    <header className={`nav ${scrolled || menu || sheet ? "is-solid" : ""}`}>
+    <header className={`nav ${scrolled || menu || sheet ? "is-solid" : ""} ${onDark && !sheet && !menu ? "is-dark" : ""} ${scrolled ? "is-compact" : ""}`}>
       <div className="container nav__inner">
-        <Link to="/" className="nav__logo" aria-label="Realy.si home"><Logo height={24} /></Link>
+        <Link to="/" className="nav__logo" aria-label="Realy.si home"><Logo height={24} onDark={onDark && !sheet && !menu} /></Link>
 
         <nav className="nav__links" aria-label="Primary" ref={panelRef}>
-          <button className={`nav__link nav__sys ${menu ? "is-open" : ""}`} aria-expanded={menu} aria-controls="sys-panel" onClick={() => setMenu((m) => !m)}>
-            System <span aria-hidden="true" className="nav__caret" />
-          </button>
           {PRIMARY.map(([to, label]) => <NavLink key={to} to={to} className="nav__link">{label}</NavLink>)}
-          <div id="sys-panel" className={`sys ${menu ? "is-open" : ""}`} hidden={!menu}>
-            {SYSTEM_MENU.map((col) => (
-              <div key={col.title} className="sys__col">
-                <p className="mono sys__title">{col.title}</p>
-                {col.links.map(([to, label, desc]) => (
-                  <Link key={to} to={to} className="sys__link" onClick={() => setMenu(false)}><strong>{label}</strong><span>{desc}</span></Link>
-                ))}
-              </div>
-            ))}
-          </div>
         </nav>
 
         <div className="nav__actions">

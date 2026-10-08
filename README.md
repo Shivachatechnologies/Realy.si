@@ -45,11 +45,18 @@ client/
   src/pages/              Home, Platform, Superintelligence, Workforce, Company, ProductDevelopment,
                           Marketplace, Growth (marketing/sales), CompanySetup, Pricing, Security,
                           Resources, About, NotFound
-  src/viz/                System visualizations
-    core/engine.js        WebGL "Superintelligence Core" (Three.js, lazy-loaded, GPU shaders)
-    DecompositionGraph, WorkforceMap, Pipeline, CommandCenter, AutonomyControl,
-    ProductEngineering, Marketplace, GlobalNetwork (canvas globe), GrowthEngine,
-    ReasoningTrace, SystemArchitecture, HeroOrbit
+  src/viz/                System visualizations (signature moments)
+    core/engine.js        01 Superintelligence Core — WebGL (Three.js), lazy-loaded, dark/light palettes,
+                          click-to-activate systems
+    CoreHero, SystemTelemetry   hero wrapper + live system telemetry
+    DecompositionGraph    02 Founder command → autonomous execution (324-task matrix)
+    CompanyGraph          03 Company intelligence graph (hover to trace)
+    WorkforceMap          04 Digital workforce network with live states
+    Pipeline              05 Idea → company, scroll-pinned sequence
+    CommandCenter         06 Founder command center
+    GlobalNetwork         07 Global company infrastructure globe (canvas)
+    ConnectFlow, ProductEngineering, Marketplace (showroom), GrowthEngine,
+    AutonomyControl, ReasoningTrace, SystemArchitecture
   build/prerender.js      Vite plugin: per-route HTML + OG tags, sitemap.xml, robots.txt, 404.html
   public/brand/           Official Realy logo (extracted from brand book v2, "on dark" variant)
 ```
@@ -87,8 +94,9 @@ bundled defaults are shown.
 
 ## Brand
 
-- Official logo only (brand book v2, "on dark" variant) — never redrawn or recolored
-- Deep-space navy `#04060B`, Realy Blue `#1764FF` as the intelligence signal, ice `#CFE0FF` / cyan `#6FD3FF` accents
+- Official logo only (brand book v2: "Primary — full colour" on light, "On dark" on dark) — never redrawn or recolored
+- Hybrid theme: light editorial sections + deep-space navy (`#04060B`) signature sections (`.dark` scope)
+- Realy Blue `#1764FF` as the intelligence signal, ice `#CFE0FF` / cyan `#6FD3FF` accents on dark
 - Geist (display + UI) · Geist Mono (technical labels)
 - Fluid type and layout: root size scales with the viewport, so 4K uses the full width
 - Motion respects `prefers-reduced-motion`.

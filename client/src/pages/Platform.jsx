@@ -1,6 +1,8 @@
 import { Button, PageHero, Reveal, SectionHead } from "../components/ui.jsx";
 import { useData } from "../hooks/useSiteData.jsx";
 import SystemArchitecture from "../viz/SystemArchitecture.jsx";
+import CompanyGraph from "../viz/CompanyGraph.jsx";
+import SecurityGrid from "../components/SecurityGrid.jsx";
 import CommandCenter from "../viz/CommandCenter.jsx";
 import AutonomyControl from "../viz/AutonomyControl.jsx";
 import FinalCTA from "../components/FinalCTA.jsx";
@@ -29,6 +31,13 @@ export default function Platform() {
       </section>
 
       <section className="section section--deep">
+        <div className="container container--wide">
+          <SectionHead eyebrow="Company intelligence graph" title="One layer coordinates the company." lede="Hover a system to trace how it connects to the rest." />
+          <Reveal className="frame"><CompanyGraph data={d.graph} /></Reveal>
+        </div>
+      </section>
+
+      <section className="section">
         <div className="container">
           <SectionHead eyebrow="Principles" title="Engineered, not assembled." />
           <Reveal as="ul" className="grid4">
@@ -37,10 +46,10 @@ export default function Platform() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
+      <section className="section dark" data-dark>
+        <div className="container container--wide">
           <SectionHead eyebrow="Founder command center" title="See everything. Decide what matters." />
-          <Reveal className="frame frame--wide"><CommandCenter data={d.commandCenter} /></Reveal>
+          <Reveal className="frame frame--dark"><CommandCenter data={d.commandCenter} /></Reveal>
           <p className="footnote">Demonstration interface. Values are illustrative.</p>
         </div>
       </section>
@@ -49,6 +58,12 @@ export default function Platform() {
         <div className="container">
           <SectionHead eyebrow="Control" title="Autonomy with boundaries." />
           <Reveal><AutonomyControl layers={d.autonomy} /></Reveal>
+        </div>
+      </section>
+      <section className="section">
+        <div className="container container--wide">
+          <SectionHead eyebrow="Security" title="Built to be trusted with a company." />
+          <SecurityGrid />
         </div>
       </section>
       <FinalCTA />

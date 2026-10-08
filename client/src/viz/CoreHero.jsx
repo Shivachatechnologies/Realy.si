@@ -13,10 +13,14 @@ const hasWebGL = () => {
  * only loaded after first paint; a static CSS poster shows until then, and
  * permanently when WebGL is unavailable.
  */
-export default function CoreHero({ functions, stageRef, containerRef }) {
+export default function CoreHero({ systems, stageRef, containerRef, active = -1, onSelect, theme = "dark" }) {
   const canvasRef = useRef(null);
   const labelRefs = useRef([]);
   const [state, setState] = useState("poster"); // poster | live | static
+  const engineRef = useRef(null);
+
+  const activeRef = useRef(active);
+  useEffect(() => { activeRef.current = active; engineRef.current?.setActive(active); }, [active]);
 
   useEffect(() => {
     if (!hasWebGL()) return;
@@ -33,7 +37,9 @@ export default function CoreHero({ functions, stageRef, containerRef }) {
 
     const boot = () => import("./core/engine.js").then(({ createCore }) => {
       if (disposed || !canvasRef.current) return;
-      engine = createCore(canvasRef.current, { labels: labelRefs.current, getLayout, lite });
+      engine = createCore(canvasRef.current, { labels: labelRefs.current, getLayout, lite, theme });
+      engineRef.current = engine;
+      engine.setActive(activeRef.current);
       if (reduced) { engine.renderOnce(); setState("static"); return; }
       setState("live");
       io = new IntersectionObserver(([e]) => {
@@ -67,14 +73,21 @@ export default function CoreHero({ functions, stageRef, containerRef }) {
   }, [stageRef, containerRef]);
 
   return (
-    <div className={`core core--${state}`} aria-hidden="true">
-      <div className="core__poster" />
-      <canvas ref={canvasRef} className="core__canvas" />
+    <div className={`core core--${state} ${active >= 0 ? "has-active" : ""}`}>
+      <div className="core__poster" aria-hidden="true" />
+      <canvas ref={canvasRef} className="core__canvas" aria-hidden="true" />
       <div className="core__labels">
-        {functions.slice(0, 10).map((f, i) => (
-          <span key={f} ref={(el) => (labelRefs.current[i] = el)} className="core__label mono">
-            <i />{f}
-          </span>
+        {systems.slice(0, 10).map((sys, i) => (
+          <button
+            key={sys.key}
+            type="button"
+            ref={(el) => (labelRefs.current[i] = el)}
+            className={`core__label ${i === active ? "is-active" : ""}`}
+            aria-pressed={i === active}
+            onClick={() => onSelect?.(i === active ? -1 : i)}
+          >
+            <i />{sys.name}
+          </button>
         ))}
       </div>
     </div>

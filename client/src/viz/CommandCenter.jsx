@@ -46,25 +46,26 @@ export default function CommandCenter({ data }) {
 
   const stream = Array.from({ length: Math.min(5, data.stream.length) }, (_, i) => data.stream[(head + i) % data.stream.length]);
   const indicators = [
-    ["Active agents", I.activeAgents, 1],
-    ["Objectives", I.objectives, 0.6],
+    ["Active systems", I.activeSystems, 1],
+    ["Active objectives", I.objectives, 0.6],
     ["Autonomous actions", I.autonomousActions, 0.92],
     ["Pending approvals", I.pendingApprovals, 0.15, "warn"],
     ["Risk signals", I.riskSignals, 0.1, "risk"],
     ["Opportunities", I.opportunities, 0.35, "opp"],
   ];
+  const health = Math.round(I.systemHealth * 100);
 
   return (
     <div ref={(el) => { ref.current = el; vref.current = el; }} className="cc">
       <div className="cc__bar">
         <div className="cc__id"><Mark size={18} /><strong>{data.company}</strong><span className="mono">{data.period}</span></div>
-        <div className="cc__sys mono"><i />All systems nominal</div>
+        <div className="cc__sys"><i />{I.activeAgents} agents active</div>
       </div>
 
       <div className="cc__grid">
         <div className="cc__biz">
           {data.business.map((m, i) => (
-            <div key={m.key} className={`cc__tile ${i >= 4 ? "cc__tile--extra" : ""}`}>
+            <div key={m.key} className={`cc__tile ${i >= 4 ? "cc__tile--extra" : ""}`} tabIndex={0} aria-label={`${m.label}: ${m.delta}`}>
               <div className="cc__k">{m.label}</div>
               <div className="cc__v tnum"><CountUp value={m.value} format={m.format} suffix={m.suffix || ""} play={play} /></div>
               <div className={`cc__d mono ${/^\+/.test(m.delta) ? "up" : /^−/.test(m.delta) ? "down" : ""}`}>{m.delta}</div>
@@ -75,6 +76,7 @@ export default function CommandCenter({ data }) {
 
         <div className="cc__intel">
           <Gauge value={I.systemIntelligence} play={play} />
+          <div className="cc__health"><span>System health</span><strong className="tnum">{health}%</strong><span className="cc__hbar"><i style={{ width: `${play ? health : 0}%` }} /></span></div>
           <ul className="cc__ind">
             {indicators.map(([k, v, f, tone]) => (
               <li key={k} className={tone ? `t-${tone}` : ""}>

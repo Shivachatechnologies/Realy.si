@@ -1,6 +1,7 @@
 import { Button, PageHero, Reveal, SectionHead } from "../components/ui.jsx";
 import { useData } from "../hooks/useSiteData.jsx";
 import ProductEngineering from "../viz/ProductEngineering.jsx";
+import ConnectFlow from "../viz/ConnectFlow.jsx";
 import FinalCTA from "../components/FinalCTA.jsx";
 
 export default function ProductDevelopment() {
@@ -19,6 +20,12 @@ export default function ProductDevelopment() {
         </div>
       </section>
       <section className="section section--deep">
+        <div className="container container--wide">
+          <SectionHead eyebrow="Already built something?" title="Connect it to Realy." lede="Bring your existing product. The system learns it, then improves, markets and scales it." />
+          <Reveal className="frame"><ConnectFlow data={d.connect} /></Reveal>
+        </div>
+      </section>
+      <section className="section">
         <div className="container">
           <SectionHead eyebrow="Engineering standard" title="Built to be operated, not just delivered." />
           <Reveal as="ul" className="grid4">

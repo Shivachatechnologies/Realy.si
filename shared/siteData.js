@@ -16,10 +16,17 @@ const siteData = {
     app: "https://app.realy.si",
   },
 
-  /* The functions the intelligence core feeds (hero visual + system maps). */
-  functions: [
-    "Product", "Marketing", "Sales", "Finance", "Engineering",
-    "Operations", "Customer Support", "Research", "Legal", "Growth",
+  /* Hero: systems the intelligence core coordinates, in three tiers. DEMO telemetry. */
+  systems: [
+    { key: "product", name: "Product", tier: "Build", status: "Planning", agents: 6, rate: 38 },
+    { key: "market", name: "Market", tier: "Understand", status: "Analyzing", agents: 4, rate: 52 },
+    { key: "capital", name: "Capital", tier: "Fund", status: "Optimizing", agents: 3, rate: 17 },
+    { key: "engineering", name: "Engineering", tier: "Build", status: "Executing", agents: 9, rate: 64 },
+    { key: "marketing", name: "Marketing", tier: "Understand", status: "Executing", agents: 7, rate: 81 },
+    { key: "finance", name: "Finance", tier: "Fund", status: "Analyzing", agents: 3, rate: 22 },
+    { key: "sales", name: "Sales", tier: "Build", status: "Executing", agents: 6, rate: 57 },
+    { key: "operations", name: "Operations", tier: "Understand", status: "Optimizing", agents: 5, rate: 33 },
+    { key: "growth", name: "Growth", tier: "Fund", status: "Thinking", agents: 4, rate: 29 },
   ],
 
   /* Capabilities of the intelligence system. */
@@ -33,17 +40,45 @@ const siteData = {
     { name: "Optimization", text: "Learns from results and re-plans without being asked." },
   ],
 
-  /* "Launch my company." decomposition (DEMO actions). */
+  /* "Launch my company." → stages → hundreds of tasks (DEMO visualization). */
   decomposition: {
     instruction: "Launch my company.",
-    layers: [
-      { name: "Strategic", actions: ["Define market thesis", "Set 90-day objectives", "Model unit economics"] },
-      { name: "Product", actions: ["Write product spec", "Prioritize roadmap", "Define success metrics"] },
-      { name: "Engineering", actions: ["Provision infrastructure", "Build MVP", "Ship to staging"] },
-      { name: "Marketing", actions: ["Position the brand", "Produce launch content", "Plan channels"] },
-      { name: "Sales", actions: ["Define ICP", "Build lead lists", "Write sequences"] },
-      { name: "Financial", actions: ["Draft budget", "Forecast runway", "Prepare pricing"] },
-      { name: "Operational", actions: ["Set up workspace", "Create processes", "Prepare formation"] },
+    stages: [
+      { name: "Strategy", tasks: ["Market thesis", "90-day objectives", "Unit economics"] },
+      { name: "Research", tasks: ["Competitor map", "Customer interviews", "Demand signals"] },
+      { name: "Brand", tasks: ["Name", "Identity", "Voice"] },
+      { name: "Product", tasks: ["Spec", "Roadmap", "Success metrics"] },
+      { name: "Engineering", tasks: ["Infrastructure", "MVP build", "Test suite"] },
+      { name: "Marketing", tasks: ["Positioning", "Launch content", "Channels"] },
+      { name: "Sales", tasks: ["ICP", "Lead lists", "Sequences"] },
+      { name: "Operations", tasks: ["Workspace", "Processes", "Formation prep"] },
+      { name: "Growth", tasks: ["Experiments", "Funnels", "Retention loops"] },
+    ],
+    tasksPerStage: 36,
+  },
+
+  /* Company intelligence graph: one layer coordinating every system. */
+  graph: {
+    center: "Realy Intelligence",
+    nodes: [
+      { key: "strategy", name: "Strategy", text: "Objectives, priorities and trade-offs." },
+      { key: "research", name: "Research", text: "Markets, competitors and customers." },
+      { key: "product", name: "Product", text: "Specs, roadmap and success metrics." },
+      { key: "engineering", name: "Engineering", text: "Architecture, builds and releases." },
+      { key: "design", name: "Design", text: "Interfaces, identity and assets." },
+      { key: "marketing", name: "Marketing", text: "Positioning, content and campaigns." },
+      { key: "sales", name: "Sales", text: "Pipeline, outreach and closing." },
+      { key: "finance", name: "Finance", text: "Budget, forecasting and runway." },
+      { key: "operations", name: "Operations", text: "Processes, vendors and tooling." },
+      { key: "legal", name: "Legal", text: "Drafts and workflows for qualified review." },
+      { key: "success", name: "Customer Success", text: "Onboarding, support and retention." },
+      { key: "analytics", name: "Analytics", text: "Metrics, attribution and forecasting." },
+    ],
+    links: [
+      ["strategy", "research"], ["strategy", "finance"], ["research", "product"], ["product", "engineering"],
+      ["product", "design"], ["design", "marketing"], ["marketing", "sales"], ["sales", "success"],
+      ["sales", "finance"], ["finance", "legal"], ["operations", "legal"], ["analytics", "marketing"],
+      ["analytics", "product"], ["success", "analytics"], ["operations", "engineering"],
     ],
   },
 
@@ -51,22 +86,46 @@ const siteData = {
   workforce: {
     center: "Realy Intelligence",
     executives: ["CEO", "CTO", "CMO", "CFO", "COO"],
-    functions: ["Product", "Engineering", "Design", "Research", "Marketing", "Sales", "Finance", "Legal", "Operations", "Support"],
+    functions: ["Product", "Engineering", "Design", "Research", "Marketing", "Sales", "Finance", "Operations", "Support"],
     statuses: ["Thinking", "Planning", "Executing", "Analyzing", "Optimizing", "Waiting for approval"],
   },
 
-  /* From thought to company. */
+  /* From thought to company: each stage hands an artifact to the next. */
   pipeline: [
-    { name: "Idea", out: "A single sentence from the founder." },
-    { name: "Research", out: "Market map, competitors, demand signals." },
-    { name: "Strategy", out: "Positioning, model, 90-day plan." },
-    { name: "Brand", out: "Name, identity, voice, site." },
-    { name: "Company", out: "Entity, documents, operations." },
-    { name: "Product", out: "Spec, design, engineering, QA." },
-    { name: "Launch", out: "Go-live across every channel." },
-    { name: "Customers", out: "Pipeline, onboarding, support." },
-    { name: "Growth", out: "Experiments that compound." },
+    { name: "Idea", out: "One sentence from the founder.", artifact: ["Objective", "Constraints", "Ambition"] },
+    { name: "Research", out: "Market map, competitors, demand signals.", artifact: ["Market map", "Competitor set", "Customer segments"] },
+    { name: "Validation", out: "Evidence the idea is worth building.", artifact: ["Demand tests", "Pricing signals", "Go / no-go"] },
+    { name: "Strategy", out: "Positioning, model, 90-day plan.", artifact: ["Positioning", "Business model", "90-day plan"] },
+    { name: "Brand", out: "Name, identity, voice, website.", artifact: ["Name", "Identity system", "Website"] },
+    { name: "Company", out: "Entity, documents, operations.", artifact: ["Entity", "Documents", "Operations"] },
+    { name: "Product", out: "Spec, design, engineering, QA.", artifact: ["Specification", "Design", "Release"] },
+    { name: "Launch", out: "Go-live across every channel.", artifact: ["Launch plan", "Content", "Channels"] },
+    { name: "Customers", out: "Pipeline, onboarding, support.", artifact: ["Pipeline", "Onboarding", "Support"] },
+    { name: "Growth", out: "Experiments that compound.", artifact: ["Experiments", "Funnels", "Retention"] },
   ],
+
+  /* Existing products: connect sources, then the system takes over. */
+  connect: {
+    sources: [
+      { name: "Website", kind: "Pages, forms, traffic" },
+      { name: "App", kind: "Product usage events" },
+      { name: "GitHub", kind: "Code and releases" },
+      { name: "CRM", kind: "Contacts and deals" },
+      { name: "Analytics", kind: "Funnels and cohorts" },
+      { name: "Payments", kind: "Revenue and churn" },
+      { name: "Database", kind: "Product data" },
+      { name: "Marketing", kind: "Campaigns and audiences" },
+      { name: "Custom systems", kind: "APIs and webhooks" },
+    ],
+    flow: [
+      { name: "Connect", text: "Link the systems you already run." },
+      { name: "Understand", text: "Build a model of the product and the business." },
+      { name: "Improve", text: "Ship fixes and features from real usage." },
+      { name: "Market", text: "Position and promote what already works." },
+      { name: "Sell", text: "Turn interest into pipeline and revenue." },
+      { name: "Scale", text: "Compound what moves the numbers." },
+    ],
+  },
 
   /* Founder command center (DEMO values). */
   commandCenter: {
@@ -81,10 +140,11 @@ const siteData = {
       { key: "runway", label: "Runway", value: 19, format: "number", suffix: " mo", delta: "+1 mo", series: [16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19] },
       { key: "growth", label: "Growth", value: 14.2, format: "percent1", delta: "MoM", series: [6, 7, 7, 8, 9, 9, 10, 11, 11, 12, 12, 13, 13, 14, 14, 14] },
       { key: "conversion", label: "Conversion", value: 3.9, format: "percent1", delta: "+0.6 pts", series: [2.4, 2.5, 2.7, 2.6, 2.9, 3.0, 3.1, 3.1, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.8, 3.9] },
-      { key: "health", label: "Product health", value: 98, format: "percent", delta: "stable", series: [95, 96, 96, 97, 96, 97, 97, 98, 97, 98, 98, 98, 97, 98, 98, 98] },
     ],
     intelligence: {
       systemIntelligence: 0.87,
+      systemHealth: 0.98,
+      activeSystems: 14,
       activeAgents: 46,
       objectives: 12,
       autonomousActions: 1842,
@@ -146,7 +206,7 @@ const siteData = {
   /* White-label marketplace (PLACEHOLDER listings until the catalog is connected). */
   marketplace: {
     total: "50+",
-    lifecycle: ["Discover", "Customize", "Brand", "Deploy", "Launch", "Scale"],
+    lifecycle: ["Discover", "Select", "Customize", "Brand", "Deploy", "Launch", "Scale"],
     categories: ["FinTech", "Trading", "Web3", "AI", "SaaS", "Gaming", "Marketplace"],
     items: [
       { name: "Neobank Core", category: "FinTech", desc: "Accounts, cards and payments." },
@@ -188,6 +248,7 @@ const siteData = {
   growth: [
     { name: "Market", group: "marketing", text: "Sizes demand and maps segments." },
     { name: "ICP", group: "marketing", text: "Defines who buys, and why." },
+    { name: "Research", group: "marketing", text: "Learns what each segment needs." },
     { name: "Content", group: "marketing", text: "Produces content for each segment." },
     { name: "Campaigns", group: "marketing", text: "Runs and tunes campaigns across channels." },
     { name: "Leads", group: "marketing", text: "Captures and enriches every lead." },
@@ -197,12 +258,22 @@ const siteData = {
     { name: "Customers", group: "sales", text: "Onboarding, expansion and retention." },
   ],
 
+  /* Security architecture. Wording describes design principles, not certifications. */
+  security: [
+    { name: "Encrypted data", text: "Company data is encrypted in transit and at rest." },
+    { name: "Secure authentication", text: "Account access protected by modern authentication." },
+    { name: "Least-privilege access", text: "Each workflow gets only the permissions it needs." },
+    { name: "Auditability", text: "Every autonomous action is logged with its reasoning." },
+    { name: "Isolated workspaces", text: "Each company runs in its own workspace." },
+    { name: "Controlled autonomy", text: "Founder-only decisions can never execute automatically." },
+  ],
+
   /* Pricing. */
   pricing: [
     { plan: "founder", name: "Founder", price: "$99", period: "/month", blurb: "For a single founder turning an idea into a company.", features: ["Company intelligence core", "Executive workforce", "Founder command center"] },
     { plan: "growth", name: "Growth", price: "$499", period: "/month", blurb: "For companies building, launching and selling.", features: ["Full digital workforce", "Marketing + sales engine", "Supervised autonomy controls"], recommended: true },
     { plan: "scale", name: "Scale", price: "$999", period: "/month", blurb: "For companies operating at speed.", features: ["Higher autonomous capacity", "Multiple products", "Priority support"] },
-    { plan: "enterprise", name: "Enterprise", price: "Custom", period: "", blurb: "For portfolios, studios and groups.", features: ["Multiple companies", "Custom intelligence workflows", "Dedicated team"], cta: "Talk to us" },
+    { plan: "enterprise", name: "Custom", price: "Custom", period: "", blurb: "For portfolios, studios and groups.", features: ["Multiple companies", "Custom intelligence workflows", "Dedicated team"], cta: "Contact us" },
   ],
 };
 

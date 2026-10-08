@@ -11,14 +11,12 @@ export default function Company() {
         <Button href={d.links.signup} size="lg" arrow>Start with an idea</Button>
         <Button to="/company-setup" variant="ghost" size="lg">Company setup</Button>
       </PageHero>
-      <section className="section section--tight">
-        <div className="container">
-          <Reveal className="frame frame--wide"><Pipeline stages={d.pipeline} /></Reveal>
-        </div>
+      <section className="section section--tight section--flush">
+        <Pipeline stages={d.pipeline} />
       </section>
       <section className="section section--deep">
         <div className="container">
-          <SectionHead eyebrow="Stages" title="Nine stages. Zero handoffs." />
+          <SectionHead eyebrow="Stages" title="Ten stages. Zero handoffs." />
           <Reveal as="ol" className="stages">
             {d.pipeline.map((s, i) => <li key={s.name}><span className="mono">{String(i + 1).padStart(2, "0")}</span><strong>{s.name}</strong><p>{s.out}</p></li>)}
           </Reveal>

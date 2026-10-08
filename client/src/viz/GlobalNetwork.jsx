@@ -7,7 +7,8 @@ import { prefersReducedMotion } from "../lib/motion.js";
  * Lightweight: ~1,600 points, paused offscreen, single static frame for
  * reduced motion.
  */
-export default function GlobalNetwork({ hubs }) {
+export default function GlobalNetwork({ hubs, theme = "light" }) {
+  const dark = theme === "dark";
   const canvasRef = useRef(null);
   const labelRefs = useRef([]);
   const [wrapRef, visible] = useVisible();
@@ -61,14 +62,14 @@ export default function GlobalNetwork({ hubs }) {
       const cx = W / 2, cy = Hh / 2, a = -0.9 + Math.sin(t * 0.12) * 0.85; // sway across the hubs
       // atmosphere
       const grd = ctx.createRadialGradient(cx, cy, R * 0.7, cx, cy, R * 1.25);
-      grd.addColorStop(0, "rgba(23,100,255,0.06)"); grd.addColorStop(1, "rgba(23,100,255,0)");
+      grd.addColorStop(0, dark ? "rgba(23,100,255,0.16)" : "rgba(23,100,255,0.06)"); grd.addColorStop(1, "rgba(23,100,255,0)");
       ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(cx, cy, R * 1.25, 0, Math.PI * 2); ctx.fill();
       // points
       for (const p of pts) {
         const [x, y, z] = rot(p, a);
         if (z < -0.15) continue;
         const al = 0.08 + Math.max(0, z) * 0.5;
-        ctx.fillStyle = `rgba(11,18,32,${al.toFixed(3)})`;
+        ctx.fillStyle = dark ? `rgba(190,210,255,${(al * 1.15).toFixed(3)})` : `rgba(11,18,32,${al.toFixed(3)})`;
         ctx.fillRect(cx + x * R, cy - y * R, 1.6, 1.6);
       }
       // arcs
@@ -82,11 +83,11 @@ export default function GlobalNetwork({ hubs }) {
           started ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
           started = true;
         }
-        ctx.strokeStyle = "rgba(23,100,255,0.6)"; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.strokeStyle = dark ? "rgba(80,140,255,0.7)" : "rgba(23,100,255,0.6)"; ctx.lineWidth = 1.2; ctx.stroke();
         // packet
         const s = (t * 0.18 + k * 0.137) % 1;
         const [x, y, z] = rot(slerp(H[i], H[j], s), a);
-        if (z > 0) { ctx.fillStyle = "rgba(11,79,230,0.95)"; ctx.beginPath(); ctx.arc(cx + x * R, cy - y * R, 1.8, 0, Math.PI * 2); ctx.fill(); }
+        if (z > 0) { ctx.fillStyle = dark ? "rgba(111,211,255,0.95)" : "rgba(11,79,230,0.95)"; ctx.beginPath(); ctx.arc(cx + x * R, cy - y * R, 1.8, 0, Math.PI * 2); ctx.fill(); }
       });
       // hubs + labels
       H.forEach((h, i) => {
@@ -99,7 +100,7 @@ export default function GlobalNetwork({ hubs }) {
           el.style.opacity = z > 0.05 ? "1" : "0";
         }
         if (z <= 0) return;
-        ctx.fillStyle = "#1764ff"; ctx.beginPath(); ctx.arc(X, Y, 3.2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = dark ? "#cfe0ff" : "#1764ff"; ctx.beginPath(); ctx.arc(X, Y, 3.2, 0, Math.PI * 2); ctx.fill();
         ctx.strokeStyle = "rgba(23,100,255,0.45)"; ctx.beginPath(); ctx.arc(X, Y, 7 + Math.sin(t * 2 + i) * 2, 0, Math.PI * 2); ctx.stroke();
       });
     };
@@ -114,7 +115,7 @@ export default function GlobalNetwork({ hubs }) {
     resize();
     if (visible && !prefersReducedMotion()) { last = performance.now(); raf = requestAnimationFrame(loop); } else draw();
     return () => { cancelAnimationFrame(raf); ro.disconnect(); };
-  }, [hubs, visible]);
+  }, [hubs, visible, dark]);
 
   return (
     <div ref={wrapRef} className="globe">
