@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Realy — Build your entire company with AI</title>
+  <meta name="description" content="Realy is the AI company operating system. From idea to company setup, product development, launch, marketing, sales and growth — an AI-powered team to build and run your company.">
+  <meta name="theme-color" content="#ffffff">
+  <meta property="og:title" content="Realy — Build your entire company with AI">
+  <meta property="og:description" content="The AI company operating system. One founder. An entire AI team.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://realy.si/">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- ============================================================ NAV -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a class="logo" href="#top" aria-label="Realy.si home">
+        <svg class="logo__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#realy-mark"/></svg>
+        <span class="logo__word">Realy<span>.si</span></span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#platform">Platform</a>
+        <a href="#team">AI Team</a>
+        <a href="#setup">Company Setup</a>
+        <a href="#product">Product</a>
+        <a href="#marketplace">Marketplace</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <div class="nav__actions">
+        <a class="nav__login" data-link="login" href="https://app.realy.si/login">Log in</a>
+        <a class="btn btn--primary btn--sm" data-link="signup" href="https://app.realy.si/signup">Start Building <span class="arrow" aria-hidden="true">→</span></a>
+        <button class="nav__toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <nav class="container" aria-label="Mobile">
+        <a href="#platform">Platform</a>
+        <a href="#team">AI Team</a>
+        <a href="#setup">Company Setup</a>
+        <a href="#product">Product</a>
+        <a href="#marketplace">Marketplace</a>
+        <a href="#pricing">Pricing</a>
+        <a href="https://app.realy.si/login" data-link="login">Log in</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ============================================================ HERO -->
+    <section class="hero" id="top">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="container hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow reveal">The AI company operating system</p>
+          <h1 class="display reveal"><span>Build your</span> <span>entire company</span> <span>with AI.</span></h1>
+          <p class="lede reveal">From idea to company setup, product development, launch, marketing, sales and growth — Realy gives you an AI-powered team to build and run your company.</p>
+          <div class="hero__cta reveal">
+            <a class="btn btn--primary btn--lg" data-link="signup" href="https://app.realy.si/signup">Start Building <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn--ghost btn--lg" href="#platform">Explore Platform</a>
+          </div>
+        </div>
+
+        <!-- Product visual: layered command center (DEMO values from data.js) -->
+        <div class="hero__visual reveal" aria-label="Preview of the Realy company command center" role="img" data-parallax>
+          <div class="hv-label mono">Realy AI · Company Command</div>
+          <div class="panel hv-main">
+            <div class="panel__bar">
+              <span class="hv-avatar" aria-hidden="true">N</span>
+              <strong id="hv-company">Nova AI</strong>
+            </div>
+            <div class="hv-progress">
+              <div class="hv-progress__row"><span>Launch progress</span><span class="mono" id="hv-pct">68%</span></div>
+              <div class="bar"><span id="hv-bar" style="--v:68%"></span></div>
+            </div>
+            <ul class="hv-agents" id="hv-agents"></ul>
+          </div>
+          <div class="panel hv-float hv-float--a" aria-hidden="true">
+            <span class="mono hv-k">Pipeline</span>
+            <strong class="hv-v">$184,000</strong>
+            <svg viewBox="0 0 120 32" class="spark"><polyline points="0,28 15,24 30,26 45,18 60,20 75,12 90,14 105,6 120,4"/></svg>
+          </div>
+          <div class="panel hv-float hv-float--b" aria-hidden="true">
+            <span class="hv-check"><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg></span>
+            <div><strong>Incorporation documents ready</strong><span>Awaiting founder approval</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ STATEMENT -->
+    <section class="statement" aria-labelledby="statement-h">
+      <div class="container">
+        <h2 id="statement-h" class="statement__h reveal">One platform for the work of an entire company.</h2>
+        <ul class="statement__cats reveal">
+          <li>Strategy</li><li>Product</li><li>Engineering</li><li>Marketing</li><li>Sales</li><li>Operations</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================ ARCHITECTURE -->
+    <section class="section" id="platform" aria-labelledby="arch-h">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow reveal">Platform</p>
+          <h2 id="arch-h" class="h2 reveal">One founder.<br>An entire AI team.</h2>
+          <p class="sub reveal">Realy is structured like a company, not a chatbot. You set direction. An AI executive layer plans. An orchestrator routes work to specialized teams that execute.</p>
+        </div>
+
+        <div class="arch reveal" aria-label="Realy system architecture">
+          <div class="arch__layer">
+            <span class="arch__tag mono">01 · Intent</span>
+            <div class="node node--founder"><span class="node__dot"></span>Founder</div>
+          </div>
+          <div class="arch__wire" aria-hidden="true"></div>
+          <div class="arch__layer">
+            <span class="arch__tag mono">02 · Executive</span>
+            <div class="node node--primary"><svg class="node__icon" viewBox="0 0 100 100" aria-hidden="true"><use href="#realy-mark"/></svg>AI CEO</div>
+          </div>
+          <div class="arch__wire" aria-hidden="true"></div>
+          <div class="arch__layer">
+            <span class="arch__tag mono">03 · Orchestration</span>
+            <div class="node node--orch">AI Orchestrator <span class="mono node__meta">routes · schedules · verifies</span></div>
+          </div>
+          <div class="arch__wire" aria-hidden="true"></div>
+          <div class="arch__layer arch__layer--depts">
+            <span class="arch__tag mono">04 · Execution</span>
+            <div class="arch__bus" aria-hidden="true"></div>
+            <ul class="arch__depts">
+              <li class="node"><span class="node__dot"></span>Strategy</li>
+              <li class="node"><span class="node__dot"></span>Product</li>
+              <li class="node"><span class="node__dot"></span>Engineering</li>
+              <li class="node"><span class="node__dot"></span>Marketing</li>
+              <li class="node"><span class="node__dot"></span>Sales</li>
+              <li class="node"><span class="node__dot"></span>Operations</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ COMMAND CENTER -->
+    <section class="section section--tint" id="command" aria-labelledby="cmd-h">
+      <div class="container">
+        <div class="section__head section__head--center">
+          <p class="eyebrow reveal">Command center</p>
+          <h2 id="cmd-h" class="h2 reveal">Your company, in one command center.</h2>
+          <p class="sub reveal">Revenue, product, pipeline and every AI employee — one live view of the whole company.</p>
+        </div>
+
+        <div class="app reveal" id="dashboard">
+          <aside class="app__side">
+            <div class="app__brand">
+              <span class="hv-avatar" aria-hidden="true">N</span>
+              <span id="dash-company">Nova AI</span>
+            </div>
+            <div class="app__nav" role="tablist" aria-label="Dashboard views" id="dash-nav"></div>
+          </aside>
+          <div class="app__main" role="tabpanel" id="dash-panel" aria-live="polite">
+            <!-- rendered from REALY_DATA.dashboard -->
+          </div>
+        </div>
+        <p class="footnote">Demo interface. Values are illustrative.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ DIFFERENTIATOR -->
+    <section class="section" aria-labelledby="diff-h">
+      <div class="container">
+        <h2 id="diff-h" class="diff__h reveal">
+          <span>Have an idea? <em>Build it.</em></span>
+          <span>Have a product? <em>Grow it.</em></span>
+          <span>Need a product? <em>Launch one.</em></span>
+        </h2>
+
+        <div class="diff">
+          <article class="card diff__card reveal">
+            <span class="mono diff__n">01</span>
+            <h3 class="h3">“I have an idea.”</h3>
+            <p>Realy validates it and creates the company blueprint.</p>
+            <div class="mini">
+              <div class="mini__head"><span>Blueprint</span><span class="pill pill--live"><i></i>Validated</span></div>
+              <ul class="mini__list">
+                <li><span>Market</span><span class="ok"><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg></span></li>
+                <li><span>Customer</span><span class="ok"><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg></span></li>
+                <li><span>Business model</span><span class="ok"><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg></span></li>
+                <li><span>Name &amp; brand</span><span class="ok"><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg></span></li>
+              </ul>
+            </div>
+          </article>
+          <article class="card diff__card reveal">
+            <span class="mono diff__n">02</span>
+            <h3 class="h3">“I already have a product.”</h3>
+            <p>Connect your product and let Realy’s AI team improve and grow it.</p>
+            <div class="mini">
+              <div class="mini__head"><span>Connections</span><span class="mono muted">3 of 3</span></div>
+              <ul class="mini__list">
+                <li><span><i class="sq"></i>Code repository</span><span class="pill pill--live"><i></i>Synced</span></li>
+                <li><span><i class="sq"></i>Payments</span><span class="pill pill--live"><i></i>Synced</span></li>
+                <li><span><i class="sq"></i>Analytics</span><span class="pill pill--live"><i></i>Synced</span></li>
+              </ul>
+            </div>
+          </article>
+          <article class="card diff__card reveal">
+            <span class="mono diff__n">03</span>
+            <h3 class="h3">“I need a product.”</h3>
+            <p>Build from scratch or choose from the Realy product marketplace.</p>
+            <div class="mini mini--split">
+              <div class="choice"><span class="mono muted">A</span><strong>Build from scratch</strong><span>AI-powered development</span></div>
+              <div class="choice choice--on"><span class="mono">B</span><strong>Start from marketplace</strong><span>Ready-to-launch software</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ COMPANY SETUP -->
+    <section class="section section--tint" id="setup" aria-labelledby="setup-h">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow reveal">Company setup</p>
+          <h2 id="setup-h" class="h2 reveal">From idea to incorporated company.</h2>
+          <p class="sub reveal">Choose a jurisdiction, and Realy prepares the entity, documents and filings, then sets up the operations your company needs on day one.</p>
+        </div>
+
+        <ol class="flow reveal" aria-label="Company setup workflow">
+          <li><span class="mono">01</span>Idea</li>
+          <li><span class="mono">02</span>Jurisdiction</li>
+          <li><span class="mono">03</span>Entity</li>
+          <li><span class="mono">04</span>Documents</li>
+          <li><span class="mono">05</span>Registration</li>
+          <li><span class="mono">06</span>Operations</li>
+        </ol>
+
+        <div class="setup reveal">
+          <div class="setup__pick">
+            <p class="mono muted setup__k">Jurisdiction</p>
+            <div class="chips" role="radiogroup" aria-label="Jurisdiction" id="jur-chips"></div>
+            <p class="mono muted setup__k setup__k--gap">What Realy prepares</p>
+            <ul class="setup__list">
+              <li><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg>Entity recommendation for your goals</li>
+              <li><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg>Formation documents for your review</li>
+              <li><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg>Partner-led filing and registration</li>
+              <li><svg class="tick" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6.3l2.3 2.2 4.7-4.8"/></svg>Day-one operations: domain, email, workspace</li>
+            </ul>
+          </div>
+          <div class="setup__card panel" aria-live="polite">
+            <div class="setup__row"><span class="muted">Entity</span><strong id="jur-entity">Delaware C-Corp or LLC</strong></div>
+            <div class="setup__row"><span class="muted">Note</span><span id="jur-note">Common choice for venture-backed startups.</span></div>
+            <div class="setup__row"><span class="muted">Documents</span><span>Formation documents prepared for your review</span></div>
+            <div class="setup__row"><span class="muted">Filing</span><span>Submitted through licensed local partners</span></div>
+          </div>
+        </div>
+        <p class="footnote">Realy is not a law firm and does not provide legal or tax advice. Company formation and filings are carried out with licensed local partners; availability and requirements vary by jurisdiction.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ PRODUCT DEVELOPMENT -->
+    <section class="section" id="product" aria-labelledby="prod-h">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow reveal">AI-powered product development</p>
+          <h2 id="prod-h" class="h2 reveal">From $500 to $100,000+.</h2>
+          <p class="sub reveal">From a landing page to an enterprise platform — scoped, built and shipped by AI engineering teams with human review where it matters.</p>
+        </div>
+        <div class="scale reveal" id="scale">
+          <div class="scale__axis mono" aria-hidden="true"><span>$500</span><span>Complexity</span><span>$100,000+</span></div>
+          <ol class="scale__list" id="scale-list"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ MARKETPLACE -->
+    <section class="section section--tint" id="marketplace" aria-labelledby="mkt-h">
+      <div class="container">
+        <div class="section__head section__head--split">
+          <div>
+            <p class="eyebrow reveal">White-label marketplace</p>
+            <h2 id="mkt-h" class="h2 reveal">Start with software that’s already built.</h2>
+          </div>
+          <p class="mkt__count reveal"><strong id="mkt-total">50+</strong><span>ready-to-launch products</span></p>
+        </div>
+
+        <div class="market reveal">
+          <div class="chips chips--scroll" role="toolbar" aria-label="Filter by category" id="mkt-filters"></div>
+          <ul class="market__grid" id="mkt-grid"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ AI EMPLOYEES (dark) -->
+    <section class="section section--dark" id="team" aria-labelledby="team-h">
+      <div class="hero__bg hero__bg--dark" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow eyebrow--dark reveal">AI employees</p>
+          <h2 id="team-h" class="h2 reveal">One command.<br>The whole company moves.</h2>
+          <p class="sub reveal">An executive layer that plans, delegates and reports — and departments that execute in parallel.</p>
+        </div>
+
+        <div class="org reveal" id="org">
+          <div class="org__console">
+            <div class="console__bar mono"><span>founder@nova</span><button class="console__run" id="org-run" type="button">Run ↻</button></div>
+            <div class="console__input"><span class="mono prompt">›</span><span id="org-cmd" class="typed"></span><span class="caret" aria-hidden="true"></span></div>
+            <ol class="console__log mono" id="org-log" aria-live="polite"></ol>
+          </div>
+          <div class="org__chart" id="org-chart" aria-label="AI organization chart"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ AUTONOMY -->
+    <section class="section" aria-labelledby="auto-h">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow reveal">Autonomy</p>
+          <h2 id="auto-h" class="h2 reveal">AI that doesn’t just answer.<br><span class="muted-h">AI that works.</span></h2>
+          <p class="sub reveal">You decide how much the AI team can do on its own. Every action falls into one of three levels.</p>
+        </div>
+
+        <div class="auto">
+          <div class="auto__spectrum mono reveal" aria-hidden="true"><span>More autonomy</span><span class="auto__line"></span><span>More control</span></div>
+          <article class="card auto__card reveal">
+            <p class="mono auto__lvl">Level 1</p>
+            <h3 class="h3">Autonomous</h3>
+            <p>AI executes approved tasks automatically.</p>
+            <div class="mini">
+              <ul class="mini__list">
+                <li><span>Publish scheduled posts</span><span class="pill pill--live"><i></i>Auto</span></li>
+                <li><span>Triage support tickets</span><span class="pill pill--live"><i></i>Auto</span></li>
+              </ul>
+            </div>
+          </article>
+          <article class="card auto__card reveal">
+            <p class="mono auto__lvl">Level 2</p>
+            <h3 class="h3">Approval</h3>
+            <p>AI prepares actions for founder approval.</p>
+            <div class="mini">
+              <div class="approve">
+                <span>Send outreach to 120 leads</span>
+                <div class="approve__btns"><span class="b b--ok">Approve</span><span class="b">Edit</span></div>
+              </div>
+            </div>
+          </article>
+          <article class="card auto__card reveal">
+            <p class="mono auto__lvl">Level 3</p>
+            <h3 class="h3">Founder control</h3>
+            <p>Important financial, legal and strategic decisions remain with the founder.</p>
+            <div class="mini">
+              <ul class="mini__list">
+                <li><span><svg class="lock" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>Sign contracts</span><span class="mono muted">Founder</span></li>
+                <li><span><svg class="lock" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>Move funds</span><span class="mono muted">Founder</span></li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ PRICING -->
+    <section class="section section--tint" id="pricing" aria-labelledby="price-h">
+      <div class="container">
+        <div class="section__head section__head--center">
+          <p class="eyebrow reveal">Pricing</p>
+          <h2 id="price-h" class="h2 reveal">Simple pricing for an entire team.</h2>
+        </div>
+        <div class="pricing" id="pricing-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================ FINAL CTA -->
+    <section class="final" aria-labelledby="final-h">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="container final__inner">
+        <p class="eyebrow reveal">Your company starts here.</p>
+        <h2 id="final-h" class="display display--final reveal">Tell Realy what you want to build.</h2>
+        <p class="lede reveal">Your AI company takes it from there.</p>
+        <div class="reveal">
+          <a class="btn btn--primary btn--lg" data-link="signup" href="https://app.realy.si/signup">Start Building <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <a class="logo" href="#top" aria-label="Realy.si home">
+        <svg class="logo__mark" viewBox="0 0 100 100" aria-hidden="true"><use href="#realy-mark"/></svg>
+        <span class="logo__word">Realy<span>.si</span></span>
+      </a>
+      <nav class="footer__links" aria-label="Footer">
+        <a href="#platform">Platform</a>
+        <a href="#team">AI Team</a>
+        <a href="#setup">Company Setup</a>
+        <a href="#marketplace">Marketplace</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+      <p class="footer__meta">© <span id="year">2026</span> Realy.si · Keep it Realy.</p>
+    </div>
+  </footer>
+
+  <!-- Mobile sticky CTA -->
+  <div class="sticky-cta" id="sticky-cta">
+    <a class="btn btn--primary btn--block" data-link="signup" href="https://app.realy.si/signup">Start Building <span class="arrow" aria-hidden="true">→</span></a>
+  </div>
+
+  <!-- Brand mark (from brand book construction: one stroke, one 56° angle) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="realy-mark" viewBox="0 0 100 100">
+      <path d="M3 16A16 16 0 0 1 19 0H67A30 30 0 0 1 68.18 59.96L93 100H73L35.8 40H67A10 10 0 0 0 67 20H3Z"/>
+      <path d="M3 64A16 16 0 0 1 19 48H29.5L61.7 100H3Z"/>
+    </symbol>
+  </svg>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
