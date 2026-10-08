@@ -34,6 +34,7 @@ export default function AIEmployees({ org }) {
   const [execs, setExecs] = useState(() => idle(executives.length));
   const [depts, setDepts] = useState(() => idle(departments.length));
   const [hot, setHot] = useState({ exec: false, dept: false });
+  const [running, setRunning] = useState(false);
   const timers = useRef([]);
   const t0 = useRef(0);
   const [ref, inView] = useInView({ threshold: 0.35 });
@@ -51,6 +52,7 @@ export default function AIEmployees({ org }) {
     const setAt = (setter, i, node) => setter((arr) => arr.map((x, j) => (j === i ? node : x)));
 
     t0.current = performance.now();
+    setRunning(true);
     setLog([]); setCmd(""); setHot({ exec: false, dept: false });
     setCeo({ state: "", text: "Idle" });
     setExecs(idle(executives.length)); setDepts(idle(departments.length));
@@ -75,6 +77,7 @@ export default function AIEmployees({ org }) {
       setHot({ exec: false, dept: false });
       setCeo({ state: "is-done", text: "Launch underway" });
       say("ai-ceo", "Week 1 plan approved · reporting to founder", true);
+      setRunning(false);
     });
   }, [command, ceo.task, executives, departments]);
 
@@ -99,8 +102,19 @@ export default function AIEmployees({ org }) {
 
         <Reveal className="org">
           <div className="org__console" ref={ref}>
-            <div className="console__bar mono"><span>founder@nova</span><button className="console__run" type="button" onClick={run}>Run ↻</button></div>
-            <div className="console__input"><span className="mono prompt">›</span><span className="typed">{cmd}</span><span className="caret" aria-hidden="true" /></div>
+            <div className="console__bar mono"><span>founder@nova</span><span>AI command</span></div>
+            <button
+              type="button"
+              className={`console__input ${running ? "is-running" : ""}`}
+              onClick={run}
+              disabled={running}
+              aria-label={`Run command: ${command}`}
+            >
+              <span className="mono prompt">›</span>
+              <span className={`typed ${cmd ? "" : "is-ghost"}`}>{cmd || command}</span>
+              <span className="caret" aria-hidden="true" />
+              <span className="console__hint mono" aria-hidden="true">{running ? "Running…" : "Click to launch ↵"}</span>
+            </button>
             <ol className="console__log mono" aria-live="polite">
               {log.map((l) => (
                 <li key={l.id}>
