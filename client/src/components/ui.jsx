@@ -5,10 +5,10 @@ import { prefersReducedMotion } from "../lib/motion.js";
 import { fmt } from "../lib/format.js";
 import HeroOrbit from "../viz/HeroOrbit.jsx";
 
-/** Official Realy logo (brand book v2, "on dark" variant). Never recolored or redrawn. */
+/** Official Realy logo (brand book v2, "Primary — full colour" variant). Never recolored or redrawn. */
 export function Logo({ className = "", height = 26 }) {
   return (
-    <img className={`logo-img ${className}`} src="/brand/realy-logo-on-dark.svg" alt="Realy.si" height={height} width={Math.round(height * 4.4635)} decoding="async" />
+    <img className={`logo-img ${className}`} src="/brand/realy-logo.svg" alt="Realy.si" height={height} width={Math.round(height * 4.4635)} decoding="async" />
   );
 }
 

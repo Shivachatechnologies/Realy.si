@@ -11,7 +11,6 @@ export default function Footer() {
         <div className="footer__brand">
           <Logo height={26} />
           <p>The company intelligence platform.<br />One intelligence. Every function.</p>
-          <p className="mono footer__status"><i />All systems nominal</p>
         </div>
         {SYSTEM_MENU.map((col) => (
           <nav key={col.title} className="footer__col" aria-label={col.title}>

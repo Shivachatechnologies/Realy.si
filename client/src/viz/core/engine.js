@@ -7,14 +7,19 @@
  * of uniforms and label positions per frame.
  */
 import {
-  AdditiveBlending, BufferAttribute, BufferGeometry, Color, EdgesGeometry, Group, IcosahedronGeometry,
+  NormalBlending, BufferAttribute, BufferGeometry, Color, EdgesGeometry, Group, IcosahedronGeometry,
   LineBasicMaterial, LineLoop, LineSegments, OctahedronGeometry, PerspectiveCamera, Points, Scene,
   ShaderMaterial, Vector3, WebGLRenderer,
 } from "three";
 
-const ICE = new Color("#cfe0ff");
+// Light theme: ink-navy structure, Realy Blue signal, deep-blue accents.
+// Line materials take colors in the working (linear) space; the custom shaders
+// write their output directly, so their uniforms get the sRGB values.
+const ICE = new Color("#0b1220");
 const BLUE = new Color("#1764ff");
-const CYAN = new Color("#6fd3ff");
+const CYAN = new Color("#0b4fe6");
+const toSRGB = (c) => c.clone().convertLinearToSRGB();
+const S_ICE = toSRGB(ICE), S_BLUE = toSRGB(BLUE), S_CYAN = toSRGB(CYAN);
 const FOV = 36;
 const DIST = 10;
 const CORE_R = 1.6; // model-space radius of the shell
@@ -45,8 +50,8 @@ const CORE_VERT = /* glsl */ `
     gl_PointSize = aSize * uPixel * (17.0 / -mv.z);
     float shell = smoothstep(0.55, 1.0, r / ${CORE_R.toFixed(2)});
     float pulse = 0.55 + 0.45 * sin(uTime * 1.6 + aPhase * 12.0);
-    vColor = mix(mix(uB, uC, aPhase * 0.35), uA, shell * 0.65);
-    vAlpha = (0.22 + 0.7 * shell) * pulse;
+    vColor = mix(mix(uB, uC, aPhase * 0.5), uA, shell * 0.45);
+    vAlpha = (0.18 + 0.6 * shell) * pulse;
   }`;
 
 const STREAM_VERT = /* glsl */ `
@@ -63,8 +68,8 @@ const STREAM_VERT = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = (1.6 + 2.2 * (1.0 - t)) * uPixel * (20.0 / -mv.z);
-    vColor = mix(uA, uB, t);
-    vAlpha = smoothstep(0.0, 0.1, t) * (1.0 - smoothstep(0.85, 1.0, t)) * 0.9;
+    vColor = mix(uB, uA, t * 0.6);
+    vAlpha = smoothstep(0.0, 0.1, t) * (1.0 - smoothstep(0.85, 1.0, t)) * 0.75;
   }`;
 
 const NODE_VERT = /* glsl */ `
@@ -75,7 +80,7 @@ const NODE_VERT = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * mv;
     vPulse = 0.5 + 0.5 * sin(uTime * 2.0 + aPhase * 6.2831);
-    gl_PointSize = (22.0 + 6.0 * vPulse) * uPixel * (10.0 / -mv.z);
+    gl_PointSize = (14.0 + 4.0 * vPulse) * uPixel * (10.0 / -mv.z);
   }`;
 const NODE_FRAG = /* glsl */ `
   uniform vec3 uA; uniform vec3 uB; varying float vPulse;
@@ -83,7 +88,7 @@ const NODE_FRAG = /* glsl */ `
     float d = length(gl_PointCoord - 0.5) * 2.0;
     float core = smoothstep(0.22, 0.0, d);
     float ring = smoothstep(0.08, 0.0, abs(d - 0.62)) * (0.35 + 0.4 * vPulse);
-    float glow = smoothstep(1.0, 0.0, d) * 0.18;
+    float glow = smoothstep(1.0, 0.0, d) * 0.08;
     vec3 c = mix(uB, uA, core);
     gl_FragColor = vec4(c, core + ring + glow);
   }`;
@@ -92,7 +97,7 @@ const LINK_VERT = /* glsl */ `
   uniform float uTime; attribute float aPhase; varying float vA;
   void main() {
     float f = pow(0.5 + 0.5 * sin(uTime * 1.2 + aPhase * 6.2831), 8.0);
-    vA = 0.015 + 0.32 * f;
+    vA = 0.03 + 0.3 * f;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }`;
 const LINK_FRAG = /* glsl */ `
@@ -109,11 +114,11 @@ const DUST_VERT = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
     gl_PointSize = 2.2 * uPixel * (14.0 / -mv.z);
-    vColor = vec3(0.75, 0.83, 1.0);
-    vAlpha = 0.16 + 0.14 * sin(uTime * 0.8 + aPhase * 20.0);
+    vColor = vec3(0.32, 0.4, 0.56);
+    vAlpha = 0.1 + 0.08 * sin(uTime * 0.8 + aPhase * 20.0);
   }`;
 
-const additive = { transparent: true, depthWrite: false, blending: AdditiveBlending };
+const additive = { transparent: true, depthWrite: false, blending: NormalBlending };
 
 /* ------------------------------------------------------------- geometry */
 function fibonacciSphere(n) {
@@ -205,7 +210,7 @@ function ring(radius, segments, color, opacity) {
   }
   const g = new BufferGeometry();
   g.setAttribute("position", new BufferAttribute(pts, 3));
-  const line = new LineLoop(g, new LineBasicMaterial({ color, transparent: true, opacity, depthWrite: false, blending: AdditiveBlending }));
+  const line = new LineLoop(g, new LineBasicMaterial({ color, transparent: true, opacity, depthWrite: false, blending: NormalBlending }));
   // satellites riding the ring
   const sat = new Float32Array(9), ph = new Float32Array(3);
   for (let i = 0; i < 3; i++) {
@@ -232,7 +237,7 @@ export function createCore(canvas, { labels = [], getLayout, lite = false }) {
 
   const uniforms = {
     // uPixel = devicePixelRatio × resolution scale (set in layout)
-    uTime: { value: 0 }, uPixel: { value: dpr }, uA: { value: ICE }, uB: { value: BLUE }, uC: { value: CYAN },
+    uTime: { value: 0 }, uPixel: { value: dpr }, uA: { value: S_ICE }, uB: { value: S_BLUE }, uC: { value: S_CYAN },
   };
 
   const world = new Group(); // receives pointer tilt
